@@ -1,6 +1,21 @@
 // /app/inventory/page.tsx
+import { Button } from "@/components/ui/button";
+import { columns, Item } from "./columns"
+import { DataTable } from "./products-table"
+import { createServerClient } from "@supabase/auth-helpers-nextjs"
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default function Inventory() {
+export default async function Inventory() {
+
+  const supabase = await createSupabaseServerClient();
+  
+  const { data, error } = await supabase
+    .from("item")
+    .select("*")
+
+  if (error) {
+    return <pre>{JSON.stringify(error, null, 2)}</pre>
+  }
 
   return (
 
@@ -10,8 +25,27 @@ export default function Inventory() {
         INVENTORY
       </h1>
 
-      <div>
-        Products
+      <div className="justify-between flex items-center">
+
+        <h1>
+          Products
+        </h1>
+
+        <div className="flex container mt-10 mx-auto justify-end">
+          <Button className="my-4">
+            Add Product
+          </Button>
+
+          <Button className="my-4 ml-2">
+            Create Order
+          </Button>
+        </div>
+        
+
+      </div>
+
+      <div className="container mx-auto py-10">
+        <DataTable columns={columns} data={data as Item[]} />
       </div>
 
     </div>
