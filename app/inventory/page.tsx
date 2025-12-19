@@ -4,13 +4,15 @@ import { columns, Item } from "./columns"
 import { DataTable } from "./products-table"
 import { createServerClient } from "@supabase/auth-helpers-nextjs"
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { AddProductModal } from "./add-product-modal"
+
 
 export default async function Inventory() {
 
   const supabase = await createSupabaseServerClient();
   
   const { data, error } = await supabase
-    .from("item")
+    .from("items")
     .select("*")
 
   if (error) {
@@ -32,16 +34,15 @@ export default async function Inventory() {
         </h1>
 
         <div className="flex container mt-10 mx-auto justify-end">
-          <Button className="my-4">
-            Add Product
-          </Button>
+          <div className="my-4">
+            <AddProductModal />
+          </div>
 
           <Button className="my-4 ml-2">
             Create Order
           </Button>
         </div>
-        
-
+      
       </div>
 
       <div className="container mx-auto py-10">
