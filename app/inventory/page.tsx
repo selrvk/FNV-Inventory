@@ -1,10 +1,11 @@
 // /app/inventory/page.tsx
+
 import { Button } from "@/components/ui/button";
 import { columns, Item } from "./columns"
 import { DataTable } from "./products-table"
-import { createServerClient } from "@supabase/auth-helpers-nextjs"
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AddProductModal } from "./add-product-modal"
+import Link from "next/link";
 
 
 export default async function Inventory() {
@@ -27,26 +28,31 @@ export default async function Inventory() {
         INVENTORY
       </h1>
 
-      <div className="justify-between flex items-center">
-
-        <h1>
-          Products
-        </h1>
+      <div className="flex items-center">
 
         <div className="flex container mt-10 mx-auto justify-end">
           <div className="my-4">
             <AddProductModal />
           </div>
 
-          <Button className="my-4 ml-2">
-            Create Order
-          </Button>
+          <Link href="/orders">
+            <Button className="my-4 ml-2">
+              Create Order
+            </Button>
+          </Link>
+
         </div>
       
       </div>
 
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={data as Item[]} />
+        <h1 className="text-2xl">
+          Products
+        </h1>
+
+        <div className="mt-10">
+          <DataTable columns={columns} data={data as Item[]} />
+        </div>
       </div>
 
     </div>

@@ -10,7 +10,7 @@ export default function NavPanel() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <aside className="bg-indigo-950 h-screen w-40 flex flex-col justify-between px-2 py-15">
+    <aside className="bg-indigo-950 h-full w-40 flex flex-col justify-between px-2 py-15">
       <div>
         <div id="general-access">
           <Link href="/dashboard">
@@ -28,6 +28,15 @@ export default function NavPanel() {
               variant={isActive("/inventory") ? "default" : "outline"}
             >
               Inventory
+            </Button>
+          </Link>
+
+          <Link href="/create-order">
+            <Button
+              className="mt-4 w-full"
+              variant={isActive("/create-order") ? "default" : "outline"}
+            >
+              Create Order
             </Button>
           </Link>
 
@@ -62,7 +71,7 @@ export default function NavPanel() {
         </div>
       </div>
 
-      <Link href="/login">
+      <Link href="/">
         <Button className="w-full" variant="outline">
           Logout
         </Button>
