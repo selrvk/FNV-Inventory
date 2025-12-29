@@ -35,7 +35,7 @@ export default async function Inventory() {
             <AddProductModal />
           </div>
 
-          <Link href="/orders">
+          <Link href="/create-order">
             <Button className="my-4 ml-2">
               Create Order
             </Button>
