@@ -1,81 +1,100 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "./ui/button";
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Button } from "./ui/button"
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  ClipboardList,
+  History,
+  Settings,
+  LogOut,
+} from "lucide-react"
 
 export default function NavPanel() {
-  const pathname = usePathname();
-
-  const isActive = (path: string) => pathname === path;
+  const pathname = usePathname()
+  const isActive = (path: string) => pathname === path
 
   return (
-    <aside className="bg-indigo-950 w-40 flex flex-col justify-between px-2 py-15">
-      <div>
-        <div id="general-access">
-          <Link href="/dashboard">
-            <Button
-              className="mt-4 w-full rounded-0"
-              variant={isActive("/dashboard") ? "default" : "outline"}
-            >
-              Dashboard
-            </Button>
-          </Link>
-
-          <Link href="/inventory">
-            <Button
-              className="mt-4 w-full "
-              variant={isActive("/inventory") ? "default" : "outline"}
-            >
-              Inventory
-            </Button>
-          </Link>
-
-          <Link href="/create-order">
-            <Button
-              className="mt-4 w-full"
-              variant={isActive("/create-order") ? "default" : "outline"}
-            >
-              Create Order
-            </Button>
-          </Link>
-
-          <Link href="/orders">
-            <Button
-              className="mt-4 w-full"
-              variant={isActive("/orders") ? "default" : "outline"}
-            >
-              Orders
-            </Button>
-          </Link>
-
-          <Link href="/order-history">
-            <Button
-              className="mt-4 w-full"
-              variant={isActive("/order-history") ? "default" : "outline"}
-            >
-              Order History
-            </Button>
-          </Link>
+    <>
+      <aside className="hidden md:flex bg-indigo-950 w-44 flex-col justify-between py-6">
+        <div className="space-y-2">
+          <h1 className="text-white p-5 font-semibold">FNV Inventory</h1>
+          <NavItem href="/dashboard" label="Dashboard" icon={LayoutDashboard} active={isActive("/dashboard")}/>
+          <NavItem href="/inventory" label="Inventory" icon={Package} active={isActive("/inventory")} />
+          <NavItem href="/create-order" label="Create Order" icon={ShoppingCart} active={isActive("/create-order")} />
+          <NavItem href="/orders" label="Orders" icon={ClipboardList} active={isActive("/orders")} />
+          <NavItem href="/order-history" label="History" icon={History} active={isActive("/order-history")}/>
         </div>
 
-        <div id="admin-only" className="mt-20">
-          <Link href="/settings">
-            <Button
-              className="mt-10 w-full"
-              variant={isActive("/settings") ? "default" : "outline"}
-            >
-              Settings
-            </Button>
-          </Link>
+        <div className="space-y-2">
+          <NavItem href="/settings" label="Settings" icon={Settings} active={isActive("/settings")} />
+          <NavItem href="/" label="Logout" icon={LogOut} />
         </div>
-      </div>
+      </aside>
 
-      <Link href="/">
-        <Button className="w-full" variant="outline">
-          Logout
-        </Button>
-      </Link>
-    </aside>
-  );
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-indigo-950 border-t border-indigo-800">
+        <div className="flex justify-around">
+          <NavIcon href="/dashboard" icon={LayoutDashboard} active={isActive("/dashboard")} />
+          <NavIcon href="/inventory" icon={Package} active={isActive("/inventory")} />
+          <NavIcon href="/create-order" icon={ShoppingCart} active={isActive("/create-order")} />
+          <NavIcon href="/orders" icon={ClipboardList} active={isActive("/orders")} />
+          <NavIcon href="/order-history" icon={History} active={isActive("/order-history")} />
+        </div>
+      </nav>
+    </>
+  )
+}
+
+/* ---------------- DESKTOP ITEM ---------------- */
+
+function NavItem({
+  href,
+  label,
+  icon: Icon,
+  active = false,
+}: {
+  href: string
+  label: string
+  icon: any
+  active?: boolean
+}) {
+  return (
+    <Link href={href}>
+      <Button
+        variant={active ? "default" : "outline"}
+        className="w-full justify-start gap-3"
+      >
+        <Icon size={18} />
+        {label}
+      </Button>
+    </Link>
+  )
+}
+
+/* ---------------- MOBILE ICON ---------------- */
+
+function NavIcon({
+  href,
+  icon: Icon,
+  active = false,
+}: {
+  href: string
+  icon: any
+  active?: boolean
+}) {
+  return (
+    <Link href={href} className="flex-1">
+      <Button
+        variant="ghost"
+        className={`w-full py-4 ${
+          active ? "text-indigo-400" : "text-indigo-200"
+        }`}
+      >
+        <Icon size={22} />
+      </Button>
+    </Link>
+  )
 }

@@ -15,14 +15,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { it } from "node:test"
 import { UpdateProductModal } from "./update-product-modal"
 
 export type Item = {
     id: number
     name: string
-    current_stock: number
     brand: string
+    current_stock: number
+    unit: string
     price_buy: number
     price_sell: number
 }
@@ -57,12 +57,16 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
+    accessorKey: "brand",
+    header: "Brand",
+  },
+  {
     accessorKey: "current_stock",
     header: "Current Stock",
   },
   {
-    accessorKey: "brand",
-    header: "Brand",
+    accessorKey: "unit",
+    header: "Unit",
   },
   {
     accessorKey: "price_buy",

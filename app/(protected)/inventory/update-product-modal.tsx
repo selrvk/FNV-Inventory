@@ -14,6 +14,7 @@ export function UpdateProductModal({ item }: { item: Item }) {
   const name = item.name
   const brand = item.brand
   const current_stock = item.current_stock
+  const unit = item.unit
   const price_buy = item.price_buy
   const price_sell = item.price_sell
 
@@ -25,7 +26,7 @@ export function UpdateProductModal({ item }: { item: Item }) {
 
       {open && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-[400px]">
+          <div className="bg-white rounded-lg p-6 w-100">
             <h2 className="text-lg font-bold mb-4">
               Update Product
             </h2>
@@ -41,6 +42,17 @@ export function UpdateProductModal({ item }: { item: Item }) {
                 <Input name="name" defaultValue={name} required />
                 <Input name="brand" defaultValue={brand} />
                 <Input name="current_stock" type="number" defaultValue={current_stock} required />
+                <select
+                  name="unit"
+                  defaultValue={unit ?? "pieces"}
+                  className="border rounded px-3 py-2 w-full"
+                >
+                  <option value="pieces">Pieces</option>
+                  <option value="boxes">Boxes</option>
+                  <option value="rolls">Rolls</option>
+                  <option value="packs">Packs</option>
+                  <option value="sets">Sets</option>
+                </select>
                 <Input name="price_buy" type="number" defaultValue={price_buy} required />
                 <Input name="price_sell" type="number" defaultValue={price_sell} required />
 

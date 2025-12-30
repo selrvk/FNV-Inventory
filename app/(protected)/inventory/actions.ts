@@ -51,11 +51,16 @@ export async function deleteProduct(item: Item) {
 export async function updateProduct(formData: FormData) {
     
     const supabase = await createSupabaseServerClient()
+    const validUnits = ["pieces", "boxes", "rolls", "packs", "sets"]
 
     const id = Number(formData.get("id"))
     const name = formData.get("name") as string
     const brand = formData.get("brand") as string
     const current_stock = Number(formData.get("current_stock"))
+    const unit = formData.get("unit") as string
+    if (!validUnits.includes(unit)) {
+      throw new Error("Invalid unit")
+    }
     const price_buy = Number(formData.get("price_buy"))
     const price_sell = Number(formData.get("price_sell"))
 
@@ -65,6 +70,7 @@ export async function updateProduct(formData: FormData) {
             name,
             brand,
             current_stock,
+            unit,
             price_buy,
             price_sell,
         })
