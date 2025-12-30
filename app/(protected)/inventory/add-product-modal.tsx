@@ -36,6 +36,16 @@ export function AddProductModal() {
                 placeholder="Initial stock"
                 required
               />
+              <select
+                  name="unit"
+                  className="border rounded px-3 py-2 w-full"
+                >
+                  <option value="pieces">Pieces</option>
+                  <option value="boxes">Boxes</option>
+                  <option value="rolls">Rolls</option>
+                  <option value="packs">Packs</option>
+                  <option value="sets">Sets</option>
+              </select>
               <Input
                 name="price_buy"
                 type="number"
