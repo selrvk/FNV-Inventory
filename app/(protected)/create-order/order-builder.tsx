@@ -2,7 +2,8 @@
 
 // /app/create-order/order-builder.tsx
 
-import { useState } from "react"
+
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Item } from "../inventory/columns"
@@ -11,10 +12,35 @@ type OrderItem = Item & {
   quantity: number
 }
 
+
+
 export default function OrderBuilder({ items }: { items: Item[] }) {
+
+  const [search, setSearch] = useState("")
+  const [page, setPage] = useState(0)
+
+  const PAGE_SIZE = 5
 
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [customerName, setCustomerName] = useState("");
+
+  const filteredItems = items.filter(item =>
+    item.name.toLowerCase().includes(search.toLowerCase()) ||
+    item.brand?.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const pageCount = Math.ceil(filteredItems.length / PAGE_SIZE)
+
+  const paginatedItems = filteredItems.slice(
+    page * PAGE_SIZE,
+    page * PAGE_SIZE + PAGE_SIZE
+  )
+
+  
+  useEffect(() => {
+    setPage(0)
+  }, [search])
+
   
   function addItem(item: Item) {
     setOrderItems(prev => {
@@ -93,93 +119,156 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
   )
 
   return (
-    <div className="grid grid-cols-3 gap-6">
-      
-      {/* LEFT: product selector */}
-      <div className="col-span-2 space-y-2">
-        <h2 className="text-xl font-semibold">Products</h2>
+  <div className="space-y-6 lg:grid lg:grid-cols-3 lg:gap-6 lg:space-y-0">
 
-        {items.map(item => (
-          <div
-            key={item.id}
-            className="flex justify-between items-center border p-2 rounded"
+    {/* PRODUCTS */}
+    <div className="lg:col-span-2 space-y-4">
+
+      <h2 className="text-lg font-semibold">Products</h2>
+
+      {/* Search */}
+      <Input
+        placeholder="Search products..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
+
+      {/* List */}
+      {paginatedItems.length === 0 && (
+        <p className="text-sm text-gray-500">
+          No products found
+        </p>
+      )}
+
+      {paginatedItems.map(item => (
+        <div
+          key={item.id}
+          className="flex items-center justify-between gap-3 rounded-lg border p-3"
+        >
+          <div className="flex-1 p-2">
+            <p className="font-medium leading-tight">{item.name}</p>
+            <p className="text-xs text-gray-500">
+              ₱{item.price_sell} / {item.unit}
+            </p>
+            <p className="text-xs text-gray-500">
+              Stock: {item.current_stock}
+            </p>
+          </div>
+
+          <Button
+            className="h-9 px-6"
+            onClick={() => addItem(item)}
+            disabled={item.current_stock === 0}
           >
-            <div>
-              <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-gray-500">
-                ₱{item.price_sell} / {item.unit} • Stock: {item.current_stock}
-              </p>
-            </div>
-            <Button onClick={() => addItem(item)} disabled={item.current_stock === 0}>
-              Add
+            Add
+          </Button>
+          
+        </div>
+      ))}
+
+      {/* Pagination */}
+      {pageCount > 1 && (
+        <div className="flex justify-between items-center pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(p => Math.max(p - 1, 0))}
+            disabled={page === 0}
+          >
+            Previous
+          </Button>
+
+          <span className="text-sm text-gray-500">
+            Page {page + 1} of {pageCount}
+          </span>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(p => Math.min(p + 1, pageCount - 1))}
+            disabled={page === pageCount - 1}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+    </div>
+
+
+    {/* ORDER SUMMARY */}
+    <div className="rounded-lg border p-4 space-y-4 lg:sticky lg:top-20">
+      <h2 className="text-lg font-semibold">Order Summary</h2>
+
+      {/* Customer */}
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Customer Name
+        </label>
+        <Input
+          value={customerName}
+          onChange={e => setCustomerName(e.target.value)}
+          placeholder="Optional"
+        />
+      </div>
+
+      {/* Items */}
+      {orderItems.length === 0 && (
+        <p className="text-sm text-gray-500">
+          No items added yet
+        </p>
+      )}
+
+      {orderItems.map(item => (
+        <div key={item.id} className="space-y-2">
+          <div className="flex justify-between items-center">
+            <p className="text-sm font-medium">{item.name}</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => removeItem(item.id)}
+            >
+              ✕
             </Button>
           </div>
-        ))}
-      </div>
 
-      {/* RIGHT: order summary */}
-      <div className="border rounded p-4 space-y-4">
-        <h2 className="text-xl font-semibold">Order Summary</h2>
-        
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Customer Name</label>
           <Input
-            type="text"
-            value={customerName}
-            onChange={e => setCustomerName(e.target.value)}
-            placeholder="Enter customer name"
+            type="number"
+            min={1}
+            max={item.current_stock}
+            value={item.quantity}
+            onChange={e => {
+              const val = e.target.value
+              updateQuantity(item.id, val === "" ? 0 : Number(val))
+            }}
+            onBlur={() =>
+              updateQuantity(
+                item.id,
+                Math.max(1, Math.min(item.quantity, item.current_stock))
+              )
+            }
           />
+
+          <p className="text-xs text-gray-500">
+            ₱{item.price_sell} × {item.quantity}
+          </p>
         </div>
+      ))}
 
-        {orderItems.map(item => (
-          <div key={item.id} className="space-y-1">
-            <div className="flex justify-between">
-              <span>{item.name}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => removeItem(item.id)}
-              >
-                ✕
-              </Button>
-            </div>
-
-            <div className="relative w-40">
-              <Input
-                type="number"
-                min={1}
-                max={item.current_stock}
-                value={item.quantity}
-                onChange={e => {
-                  const val = e.target.value;
-                  // Allow empty string temporarily for backspacing
-                  const newQty = val === "" ? 0 : Number(val);
-                  updateQuantity(item.id, newQty);
-                }}
-                onBlur={() => {
-                  // Clamp and default to 1 if empty
-                  updateQuantity(item.id, Math.max(1, Math.min(item.quantity, item.current_stock)));
-                }}
-                className="pr-12"
-              />
-
-              <p className="text-xs text-gray-500">
-                Stock available: {item.current_stock}
-              </p>
-            </div>
-          </div>
-        ))}
-
-
-        <div className="border-t pt-4 font-bold">
-          Total: ₱{total.toFixed(2)}
-        </div>
-
-        <Button className="w-full" onClick={submitOrder}>
-          Submit Order
-        </Button>
+      {/* Total */}
+      <div className="border-t pt-3 font-semibold text-right">
+        Total: ₱{total.toFixed(2)}
       </div>
 
+      {/* Submit */}
+      <Button
+        className="w-full h-11"
+        onClick={submitOrder}
+        disabled={orderItems.length === 0}
+      >
+        Submit Order
+      </Button>
     </div>
-  )
+  </div>
+)
+
 }
