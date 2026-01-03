@@ -1,39 +1,55 @@
-// /app/order-history/page.tsx
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { clearAllOrderHistory, clearSingleOrder } from "./actions";
+import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { clearAllOrderHistory, clearSingleOrder } from "./actions"
 
 export default async function OrderHistory() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient()
+
+  // 🔐 Get current user
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
+
+  if (!user) return <p className="p-6">Please log in</p>
+
+  // 🔐 Check admin role
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single()
+
+  const isAdmin = profile?.is_admin ?? false
 
   // Fetch completed / cancelled orders
   const { data: orders, error: ordersError } = await supabase
     .from("orders")
     .select("*")
     .in("status", ["COMPLETED", "CANCELLED"])
-    .order("date_completed", { ascending: false });
+    .order("date_completed", { ascending: false })
 
   if (ordersError) {
-    return <pre>{JSON.stringify(ordersError, null, 2)}</pre>;
+    return <pre>{JSON.stringify(ordersError, null, 2)}</pre>
   }
 
-  const orderIds = orders?.map(o => o.id) ?? [];
+  const orderIds = orders?.map(o => o.id) ?? []
 
   const { data: orderItems, error: itemsError } = await supabase
     .from("order_item")
     .select("*, items(name, unit)")
-    .in("order_id", orderIds);
+    .in("order_id", orderIds)
 
   if (itemsError) {
-    return <pre>{JSON.stringify(itemsError, null, 2)}</pre>;
+    return <pre>{JSON.stringify(itemsError, null, 2)}</pre>
   }
 
   return (
     <div className="container mx-auto py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-blue-900 text-3xl font-bold">ORDER HISTORY</h1>
+        <h1 className="text-blue-900 text-3xl font-bold">
+          ORDER HISTORY
+        </h1>
 
-        {/* Clear ALL history */}
-        {orders && orders.length > 0 && (
+        {/* 🔐 ADMIN ONLY */}
+        {isAdmin && orders && orders.length > 0 && (
           <form action={clearAllOrderHistory}>
             <button
               type="submit"
@@ -52,7 +68,7 @@ export default async function OrderHistory() {
           {orders.map(order => {
             const itemsForOrder = orderItems?.filter(
               item => item.order_id === order.id
-            );
+            )
 
             return (
               <div
@@ -62,7 +78,8 @@ export default async function OrderHistory() {
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <p className="font-medium">
-                      Order #{order.id} • {order.customer_name || "No name"}
+                      Order #{order.id} •{" "}
+                      {order.customer_name || "No name"}
                     </p>
                     <p className="text-sm text-gray-500">
                       Status: {order.status} • Total: ₱
@@ -76,20 +93,22 @@ export default async function OrderHistory() {
                     </p>
                   </div>
 
-                  {/* Clear SINGLE record */}
-                  <form
-                    action={async () => {
-                      "use server";
-                      await clearSingleOrder(order.id);
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="text-xs text-red-600 hover:underline"
+                  {/* 🔐 ADMIN ONLY */}
+                  {isAdmin && (
+                    <form
+                      action={async () => {
+                        "use server"
+                        await clearSingleOrder(order.id)
+                      }}
                     >
-                      Clear Record
-                    </button>
-                  </form>
+                      <button
+                        type="submit"
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Clear Record
+                      </button>
+                    </form>
+                  )}
                 </div>
 
                 {/* Ordered items */}
@@ -110,10 +129,10 @@ export default async function OrderHistory() {
                   </div>
                 )}
               </div>
-            );
+            )
           })}
         </div>
       )}
     </div>
-  );
+  )
 }

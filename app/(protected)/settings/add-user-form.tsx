@@ -35,7 +35,6 @@ export function AddUserForm() {
       setIsAdmin(false)
 
       router.refresh()
-      
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -44,45 +43,91 @@ export function AddUserForm() {
   }
 
   return (
-    
-    <form onSubmit={handleSubmit} className="p-5 mb-6 space-y-3 w-[50%]">
-      {error && <p className="text-red-600">{error}</p>}
-      {success && <p className="text-green-600">{success}</p>}
+    <form
+      onSubmit={handleSubmit}
+      className="
+        w-full
+        max-w-md
+        mx-auto
+        p-4
+        sm:p-6
+        space-y-4
+        bg-white
+        rounded-lg
+        shadow
+      "
+    >
+      <h2 className="text-lg font-semibold text-gray-800">
+        Add New User
+      </h2>
 
-      <div className="flex flex-col">
-        <label>Username</label>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {success && <p className="text-sm text-green-600">{success}</p>}
+
+      <div className="flex flex-col space-y-1">
+        <label className="text-sm font-medium">Username</label>
         <input
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          className="w-[50%] px-2 py-1 border rounded bg-white"
+          className="
+            w-full
+            px-3
+            py-2
+            border
+            rounded
+            bg-white
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+          "
         />
       </div>
 
-      <div className="flex flex-col">
-        <label>Password</label>
+      <div className="flex flex-col space-y-1">
+        <label className="text-sm font-medium">Password</label>
         <input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           required
-          className="w-[50%] px-2 py-1 border rounded bg-white"
+          className="
+            w-full
+            px-3
+            py-2
+            border
+            rounded
+            bg-white
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+          "
         />
       </div>
 
-      <div className="flex items-center space-x-2">
+      <label className="flex items-center space-x-2 text-sm">
         <input
           type="checkbox"
           checked={isAdmin}
           onChange={(e) => setIsAdmin(e.target.checked)}
+          className="h-4 w-4"
         />
-        <label>Admin User?</label>
-      </div>
+        <span>Admin user</span>
+      </label>
 
       <button
         type="submit"
         disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded"
+        className="
+          w-full
+          py-2
+          bg-blue-600
+          text-white
+          rounded
+          font-medium
+          hover:bg-blue-700
+          disabled:opacity-60
+        "
       >
         {loading ? "Creating..." : "Add User"}
       </button>

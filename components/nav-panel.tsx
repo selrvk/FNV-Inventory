@@ -42,6 +42,8 @@ export default function NavPanel() {
           <NavIcon href="/create-order" icon={ShoppingCart} active={isActive("/create-order")} />
           <NavIcon href="/orders" icon={ClipboardList} active={isActive("/orders")} />
           <NavIcon href="/order-history" icon={History} active={isActive("/order-history")} />
+          <NavIcon href="/settings" icon={Settings} active={isActive("/settings")}/>
+          <NavIcon href="/" icon={LogOut} />
         </div>
       </nav>
     </>

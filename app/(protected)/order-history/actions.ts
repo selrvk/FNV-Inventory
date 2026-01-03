@@ -1,51 +1,46 @@
-// /app/order-history/actions.ts
-"use server";
+"use server"
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
+import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { revalidatePath } from "next/cache"
 
-export async function clearAllOrderHistory() {
-  const supabase = await createSupabaseServerClient();
+async function requireAdmin() {
+  const supabase = await createSupabaseServerClient()
 
-  // 1️⃣ Get order IDs
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select("id")
-    .in("status", ["COMPLETED", "CANCELLED"]);
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
+  if (!user) throw new Error("Unauthorized")
 
-  if (error || !orders || orders.length === 0) {
-    return;
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single()
+
+  if (!profile?.is_admin) {
+    throw new Error("Forbidden")
   }
 
-  const orderIds = orders.map(o => o.id);
+  return supabase
+}
 
-  // 2️⃣ Delete order items
-  await supabase
-    .from("order_item")
-    .delete()
-    .in("order_id", orderIds);
+export async function clearAllOrderHistory() {
+  const supabase = await requireAdmin()
 
-  // 3️⃣ Delete orders
   await supabase
     .from("orders")
     .delete()
-    .in("id", orderIds);
+    .in("status", ["COMPLETED", "CANCELLED"])
 
-  revalidatePath("/order-history");
+  revalidatePath("/order-history")
 }
 
 export async function clearSingleOrder(orderId: number) {
-  const supabase = await createSupabaseServerClient();
-
-  await supabase
-    .from("order_item")
-    .delete()
-    .eq("order_id", orderId);
+  const supabase = await requireAdmin()
 
   await supabase
     .from("orders")
     .delete()
-    .eq("id", orderId);
+    .eq("id", orderId)
 
-  revalidatePath("/order-history");
+  revalidatePath("/order-history")
 }

@@ -2,15 +2,16 @@
 import { AdminUserList } from "./admin-user-list"
 import { AddUserForm } from "./add-user-form"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { ProfileSettingsForm } from "./profile-settings-form"
 
 
 export default async function Settings() {
   const supabase = await createSupabaseServerClient()
 
-  const { data, error } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
   const user = data.user
 
-  if (!user) return <p>Please log in</p>
+  if (!user) return <p className="p-6">Please log in</p>
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -21,30 +22,42 @@ export default async function Settings() {
   const isAdmin = profile?.is_admin ?? false
 
   return (
-    <div className="p-6">
-      <h1 className="text-blue-900 text-3xl font-bold">SETTINGS</h1>
+    <div className="p-4 sm:p-6 space-y-6">
+      <h1 className="text-blue-900 text-2xl sm:text-3xl font-bold">
+        SETTINGS
+      </h1>
 
       {isAdmin ? (
-        <>
-          <div className="flex flex-col mt-6 bg-blue-50 rounded-2xl p-10">
-            <h2 className="text-2xl font-semibold mb-4">User Management</h2>
-            <div className="flex flex-row justify-between">
-              <AddUserForm />      {/* Admin-only form */}
-              <AdminUserList />    {/* Admin-only list */}
+        <section className="bg-blue-50 rounded-2xl p-4 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6">
+            User Management
+          </h2>
+
+          {/* MOBILE: column | DESKTOP: row */}
+          <div className="flex flex-col lg:flex-row gap-6 items-start">
+            {/* Left */}
+            <div className="w-full lg:w-[65%]">
+              <AddUserForm />
+            </div>
+
+            {/* Right */}
+            <div className="w-full lg:w-[35%]">
+              <AdminUserList />
             </div>
           </div>
-        </>
+        </section>
       ) : (
-        <p className="mt-6 text-gray-600">
-          Welcome User!
-        </p>
+        <p className="text-gray-600">Welcome User!</p>
       )}
 
-      <div className="flex flex-col mt-6 bg-blue-50 rounded-2xl p-10">
-            <h2 className="text-2xl font-semibold mb-4">Profile Management</h2>
-            <div className="flex flex-row justify-between">
-            </div>
-          </div>
+      <section className="bg-blue-50 rounded-2xl p-4 sm:p-8">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+          Profile Management
+        </h2>
+
+        <ProfileSettingsForm />
+      </section>
+
     </div>
   )
 }
