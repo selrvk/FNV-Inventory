@@ -58,7 +58,7 @@ export default function LoginPage() {
 
           <div>
             <label className="block mb-2 text-sm font-medium">
-              Email
+              Username
             </label>
             <input
               name="username"

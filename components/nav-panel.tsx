@@ -19,9 +19,18 @@ export default function NavPanel() {
 
   return (
     <>
-      <aside className="hidden md:flex bg-indigo-950 w-44 flex-col justify-between py-6">
-        <div className="space-y-2">
-          <h1 className="text-white p-5 font-semibold">FNV Inventory</h1>
+      <aside className="hidden md:flex bg-blue-900/50 w-44 flex-col justify-between py-6">
+        <div className="space-y-20">
+          <div>
+            <img
+              src="/fnv.png"
+              alt="Product image"
+              className="w-30 object-cover justify-self-center"
+            />
+            <h1 className="text-white font-semibold text-center text-sm">
+              Inventory Management System
+            </h1>
+          </div>
           <NavItem href="/dashboard" label="Dashboard" icon={LayoutDashboard} active={isActive("/dashboard")}/>
           <NavItem href="/inventory" label="Inventory" icon={Package} active={isActive("/inventory")} />
           <NavItem href="/create-order" label="Create Order" icon={ShoppingCart} active={isActive("/create-order")} />
@@ -35,7 +44,7 @@ export default function NavPanel() {
         </div>
       </aside>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-indigo-950 border-t border-indigo-800">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-blue-900 border-t border-indigo-800">
         <div className="flex justify-around">
           <NavIcon href="/dashboard" icon={LayoutDashboard} active={isActive("/dashboard")} />
           <NavIcon href="/inventory" icon={Package} active={isActive("/inventory")} />
@@ -67,7 +76,7 @@ function NavItem({
     <Link href={href}>
       <Button
         variant={active ? "default" : "outline"}
-        className="w-full justify-start gap-3"
+        className="w-full justify-start gap-3 rounded-none"
       >
         <Icon size={18} />
         {label}
@@ -92,7 +101,7 @@ function NavIcon({
       <Button
         variant="ghost"
         className={`w-full py-4 ${
-          active ? "text-indigo-400" : "text-indigo-200"
+          active ? "text-white" : "text-indigo-300"
         }`}
       >
         <Icon size={22} />

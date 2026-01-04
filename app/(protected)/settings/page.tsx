@@ -34,14 +34,14 @@ export default async function Settings() {
           </h2>
 
           {/* MOBILE: column | DESKTOP: row */}
-          <div className="flex flex-col lg:flex-row gap-6 items-start">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* Left */}
-            <div className="w-full lg:w-[65%]">
+            <div className="w-full lg:w-[50%]">
               <AddUserForm />
             </div>
 
             {/* Right */}
-            <div className="w-full lg:w-[35%]">
+            <div className="w-full lg:w-[50%]">
               <AdminUserList />
             </div>
           </div>

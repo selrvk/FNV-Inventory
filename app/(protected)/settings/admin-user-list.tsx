@@ -30,7 +30,7 @@ export async function AdminUserList() {
         Current Users
       </h3>
 
-      <ul className="space-y-3 max-h-[300px] overflow-y-auto">
+      <ul className="space-y-3 max-h-75 autooverflow-y-">
         {users?.map((u) => (
           <li
             key={u.id}

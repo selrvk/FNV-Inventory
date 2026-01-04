@@ -22,7 +22,7 @@ export default async function Inventory() {
 
   return (
 
-    <div className="">
+    <div className="mx-auto py-6">
 
       <h1 className="text-blue-900 text-3xl font-bold">
         INVENTORY
