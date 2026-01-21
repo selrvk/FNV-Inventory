@@ -55,6 +55,11 @@ export const columns: ColumnDef<Item>[] = [
         </Button>
       )
     },
+    cell: ({ getValue }) => (
+      <div className="whitespace-normal break-words max-w-[140px] sm:max-w-[240px]">
+        {getValue() as string}
+      </div>
+    ),
   },
   {
     accessorKey: "brand",

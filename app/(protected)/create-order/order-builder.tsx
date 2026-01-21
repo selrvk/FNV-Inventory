@@ -18,6 +18,9 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
 
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
+  const [expandedItemId, setExpandedItemId] = useState<number | null>(null);
+  const [expandedProductId, setExpandedProductId] = useState<number | null>(null);
+
 
   const PAGE_SIZE = 5
 
@@ -140,31 +143,53 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
         </p>
       )}
 
-      {paginatedItems.map(item => (
-        <div
-          key={item.id}
-          className="flex items-center justify-between gap-3 rounded-lg border p-3"
-        >
-          <div className="flex-1 p-2">
-            <p className="font-medium leading-tight">{item.name}</p>
-            <p className="text-xs text-gray-500">
-              ₱{item.price_sell} / {item.unit}
-            </p>
-            <p className="text-xs text-gray-500">
-              Stock: {item.current_stock}
-            </p>
-          </div>
+      {paginatedItems.map(item => {
+        const isOpen = expandedProductId === item.id;
 
-          <Button
-            className="h-9 px-6"
-            onClick={() => addItem(item)}
-            disabled={item.current_stock === 0}
+        return (
+          <div
+            key={item.id}
+            className="rounded-lg border p-3 space-y-2 cursor-pointer"
+            onClick={() =>
+              setExpandedProductId(isOpen ? null : item.id)
+            }
           >
-            Add
-          </Button>
-          
-        </div>
-      ))}
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1">
+                <p className="font-medium leading-tight">{item.name}</p>
+                <p className="text-xs text-gray-500">
+                  ₱{item.price_sell} / {item.unit}
+                </p>
+              </div>
+
+              <Button
+                className="h-9 px-6"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addItem(item);
+                }}
+                disabled={item.current_stock === 0}
+              >
+                Add
+              </Button>
+            </div>
+
+            {/* Expanded Details */}
+            {isOpen && (
+              <div className="pt-2 space-y-1 text-xs text-gray-500">
+                {item.brand && <p className="font-bold">Brand: {item.brand}</p>}
+                <p>Stock: {item.current_stock}</p>
+                <p>Unit: {item.unit}</p>
+                <p className="font-medium text-gray-700">
+                  Price: ₱{item.price_sell}
+                </p>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
 
       {/* Pagination */}
       {pageCount > 1 && (
@@ -218,41 +243,71 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
         </p>
       )}
 
-      {orderItems.map(item => (
-        <div key={item.id} className="space-y-2">
-          <div className="flex justify-between items-center">
-            <p className="text-sm font-medium">{item.name}</p>
+      {orderItems.map(item => {
+    const isOpen = expandedItemId === item.id;
+
+    return (
+      <div key={item.id} className="rounded-md border p-2 space-y-2">
+
+        {/* Header row (click to expand) */}
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() =>
+            setExpandedItemId(isOpen ? null : item.id)
+          }
+        >
+          <p className="text-sm font-medium">
+            {item.name}
+          </p>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500">
+              x{item.quantity}
+            </span>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => removeItem(item.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                removeItem(item.id);
+              }}
             >
               ✕
             </Button>
           </div>
-
-          <Input
-            type="number"
-            min={1}
-            max={item.current_stock}
-            value={item.quantity}
-            onChange={e => {
-              const val = e.target.value
-              updateQuantity(item.id, val === "" ? 0 : Number(val))
-            }}
-            onBlur={() =>
-              updateQuantity(
-                item.id,
-                Math.max(1, Math.min(item.quantity, item.current_stock))
-              )
-            }
-          />
-
-          <p className="text-xs text-gray-500">
-            ₱{item.price_sell} × {item.quantity}
-          </p>
         </div>
-      ))}
+
+        {/* Expanded details */}
+        {isOpen && (
+          <div className="space-y-2 pt-2">
+
+            <Input
+              type="number"
+              min={1}
+              max={item.current_stock}
+              value={item.quantity}
+              onChange={e => {
+                const val = e.target.value;
+                updateQuantity(item.id, val === "" ? 0 : Number(val));
+              }}
+              onBlur={() =>
+                updateQuantity(
+                  item.id,
+                  Math.max(1, Math.min(item.quantity, item.current_stock))
+                )
+              }
+            />
+
+            <p className="text-xs text-gray-500">
+              ₱{item.price_sell} × {item.quantity} = ₱
+              {(item.price_sell * item.quantity).toFixed(2)}
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  })}
+
 
       {/* Total */}
       <div className="border-t pt-3 font-semibold text-right">
