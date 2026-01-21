@@ -7,6 +7,7 @@ import { Item } from "./columns"
 export async function addProduct(formData: FormData) {
   const supabase = await createSupabaseServerClient()
 
+  const barcode = formData.get("barcode") as string
   const name = formData.get("name") as string
   const brand = formData.get("brand") as string
   const current_stock = Number(formData.get("current_stock"))
@@ -17,6 +18,7 @@ export async function addProduct(formData: FormData) {
   const { error } = await supabase
     .from("items")
     .insert({
+      barcode,
       name,
       brand,
       current_stock,
@@ -55,6 +57,7 @@ export async function updateProduct(formData: FormData) {
     const supabase = await createSupabaseServerClient()
     const validUnits = ["pieces", "boxes", "rolls", "packs", "sets"]
 
+    const barcode = formData.get("barcode") as string
     const id = Number(formData.get("id"))
     const name = formData.get("name") as string
     const brand = formData.get("brand") as string
@@ -69,6 +72,7 @@ export async function updateProduct(formData: FormData) {
     const { error } = await supabase
         .from("items")
         .update({
+            barcode,
             name,
             brand,
             current_stock,

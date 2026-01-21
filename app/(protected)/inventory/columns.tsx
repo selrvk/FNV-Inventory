@@ -18,6 +18,7 @@ import {
 import { UpdateProductModal } from "./update-product-modal"
 
 export type Item = {
+    barcode: string | null
     id: number
     name: string
     brand: string
@@ -28,6 +29,20 @@ export type Item = {
 }
 
 export const columns: ColumnDef<Item>[] = [
+  {
+    accessorKey: "barcode",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Barcode
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
   {
     accessorKey: "id",
     header: ({ column }) => {
@@ -56,14 +71,24 @@ export const columns: ColumnDef<Item>[] = [
       )
     },
     cell: ({ getValue }) => (
-      <div className="whitespace-normal break-words max-w-[140px] sm:max-w-[240px]">
+      <div className="whitespace-normal wrap-break-word max-w-35 sm:max-w-60">
         {getValue() as string}
       </div>
     ),
   },
   {
     accessorKey: "brand",
-    header: "Brand",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Brand
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "current_stock",

@@ -10,6 +10,7 @@ export function UpdateProductModal({ item }: { item: Item }) {
 
   const [open, setOpen] = useState(false)
 
+  const barcode = item.barcode
   const id = item.id
   const name = item.name
   const brand = item.brand
@@ -38,6 +39,12 @@ export function UpdateProductModal({ item }: { item: Item }) {
               }}
               className="space-y-3"
             >
+                <Input
+                  name="barcode"
+                  type="text"
+                  placeholder="Enter barcode"
+                  defaultValue={barcode ?? ""}
+                />
                 <input type="hidden" name="id" value={id} />
                 <Input name="name" defaultValue={name} required />
                 <Input name="brand" defaultValue={brand} />

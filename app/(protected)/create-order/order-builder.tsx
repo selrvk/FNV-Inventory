@@ -157,6 +157,7 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
             {/* Header */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1">
+                <p>{item.barcode}</p>
                 <p className="font-medium leading-tight">{item.name}</p>
                 <p className="text-xs text-gray-500">
                   ₱{item.price_sell} / {item.unit}

@@ -33,7 +33,9 @@ interface DataTableProps<TData extends {
 }
 
 function useIsMobile() {
+  
   const [isMobile, setIsMobile] = React.useState(false)
+  
 
   React.useEffect(() => {
     const media = window.matchMedia("(max-width: 640px)")
@@ -49,6 +51,7 @@ function useIsMobile() {
 }
 
 export function DataTable<TData extends {
+  barcode: string | null
   current_stock: number
   unit: string
   price_buy: number
@@ -57,9 +60,17 @@ export function DataTable<TData extends {
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  
+  const [mounted, setMounted] = React.useState(false)
   const isMobile = useIsMobile()
   const [expandedRow, setExpandedRow] = React.useState<string | null>(null)
   const [sorting, setSorting] = React.useState<SortingState>([])
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   const table = useReactTable({
     data,
@@ -68,6 +79,7 @@ export function DataTable<TData extends {
       sorting,
       columnVisibility: isMobile
         ? {
+            barcode: false,
             name: true,
             brand: true,
             current_stock: false,
@@ -144,6 +156,10 @@ export function DataTable<TData extends {
                     <TableRow>
                       <TableCell colSpan={row.getVisibleCells().length}>
                         <div className="grid grid-cols-2 gap-3 text-sm bg-zinc-50 p-3 rounded-md">
+                          <div>
+                            <span className="text-muted-foreground font-bold">Barcode</span>
+                            <div>{row.original.barcode}</div>
+                          </div>
                           <div>
                             <span className="text-muted-foreground">Stock</span>
                             <div>{row.original.current_stock}</div>
