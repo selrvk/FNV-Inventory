@@ -70,7 +70,6 @@ export function DataTable<TData extends {
     setMounted(true)
   }, [])
 
-  if (!mounted) return null
 
   const table = useReactTable({
     data,
@@ -97,8 +96,10 @@ export function DataTable<TData extends {
   })
 
   return (
-    <div className="rounded-md border">
-      <div className="overflow-hidden border-b sm:max-w-full max-w-[360px]">
+    <>
+    {!mounted ? null : (
+      <div className="rounded-md border">
+      <div className="overflow-hidden border-b sm:max-w-full max-w-90">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -213,5 +214,9 @@ export function DataTable<TData extends {
         </Button>
       </div>
     </div>
-  )
+
+    )}
+    </>
+  
+  ) 
 }
