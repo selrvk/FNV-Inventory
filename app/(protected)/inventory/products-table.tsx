@@ -3,6 +3,7 @@
 
 import * as React from "react"
 import {
+  getFilteredRowModel,
   ColumnDef,
   SortingState,
   flexRender,
@@ -61,6 +62,7 @@ export function DataTable<TData extends {
   data,
 }: DataTableProps<TData, TValue>) {
   
+  const [globalFilter, setGlobalFilter] = React.useState("")
   const [mounted, setMounted] = React.useState(false)
   const isMobile = useIsMobile()
   const [expandedRow, setExpandedRow] = React.useState<string | null>(null)
@@ -76,6 +78,7 @@ export function DataTable<TData extends {
     columns,
     state: {
       sorting,
+      globalFilter,
       columnVisibility: isMobile
         ? {
             barcode: false,
@@ -92,6 +95,7 @@ export function DataTable<TData extends {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(), 
     getPaginationRowModel: getPaginationRowModel(),
   })
 
@@ -100,6 +104,14 @@ export function DataTable<TData extends {
     {!mounted ? null : (
       <div className="rounded-md border">
       <div className="overflow-hidden border-b sm:max-w-full max-w-90">
+        <div className="p-2">
+          <input
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search products..."
+            className="w-full sm:max-w-sm border rounded px-3 py-2 text-sm"
+          />
+        </div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

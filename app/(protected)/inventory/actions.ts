@@ -7,7 +7,8 @@ import { Item } from "./columns"
 export async function addProduct(formData: FormData) {
   const supabase = await createSupabaseServerClient()
 
-  const barcode = formData.get("barcode") as string
+  const rawBarcode = formData.get("barcode") as string
+  const barcode = rawBarcode?.trim() || null
   const name = formData.get("name") as string
   const brand = formData.get("brand") as string
   const current_stock = Number(formData.get("current_stock"))
@@ -57,7 +58,8 @@ export async function updateProduct(formData: FormData) {
     const supabase = await createSupabaseServerClient()
     const validUnits = ["pieces", "boxes", "rolls", "packs", "sets"]
 
-    const barcode = formData.get("barcode") as string
+    const rawBarcode = formData.get("barcode") as string
+    const barcode = rawBarcode?.trim() || null
     const id = Number(formData.get("id"))
     const name = formData.get("name") as string
     const brand = formData.get("brand") as string
@@ -69,22 +71,37 @@ export async function updateProduct(formData: FormData) {
     const price_buy = Number(formData.get("price_buy"))
     const price_sell = Number(formData.get("price_sell"))
 
-    const { error } = await supabase
-        .from("items")
-        .update({
-            barcode,
-            name,
-            brand,
-            current_stock,
-            unit,
-            price_buy,
-            price_sell,
-        })
-        .eq("id", id)
+    const { data: existing, error: checkError } = await supabase
+    .from("items")
+    .select("id")
+    .eq("barcode", barcode)
+    .neq("id", id)
+    .maybeSingle()
 
-    if (error) {
-        throw new Error(error.message)
-    }
+  if (checkError) {
+    throw new Error(checkError.message)
+  }
 
-    revalidatePath("/inventory")
+  if (existing) {
+    throw new Error("This barcode is already used by another product.")
+  }
+
+  const { error } = await supabase
+    .from("items")
+    .update({
+      barcode,
+      name,
+      brand,
+      current_stock,
+      unit,
+      price_buy,
+      price_sell,
+    })
+    .eq("id", id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath("/inventory")
 }
