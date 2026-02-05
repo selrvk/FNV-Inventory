@@ -11,6 +11,7 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
+  ColumnFiltersState,
 } from "@tanstack/react-table"
 
 import {
@@ -66,7 +67,11 @@ export function DataTable<TData extends {
   const [mounted, setMounted] = React.useState(false)
   const isMobile = useIsMobile()
   const [expandedRow, setExpandedRow] = React.useState<string | null>(null)
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "brand", desc: false },
+    { id: "id", desc: false }, 
+  ])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
   React.useEffect(() => {
     setMounted(true)
@@ -79,6 +84,7 @@ export function DataTable<TData extends {
     state: {
       sorting,
       globalFilter,
+      columnFilters,
       columnVisibility: isMobile
         ? {
             barcode: false,
@@ -94,24 +100,46 @@ export function DataTable<TData extends {
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(), 
     getPaginationRowModel: getPaginationRowModel(),
+
+    enableMultiSort: true,
+    autoResetAll: false,
   })
 
   return (
     <>
     {!mounted ? null : (
       <div className="rounded-md border">
-      <div className="overflow-hidden border-b sm:max-w-full max-w-90">
-        <div className="p-2">
+      <div className="border-b sm:max-w-full">
+        <div className="p-4">
           <input
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
             placeholder="Search products..."
             className="w-full sm:max-w-sm border rounded px-3 py-2 text-sm"
           />
+          <select
+            value={(table.getColumn("brand")?.getFilterValue() as string) ?? ""}
+            onChange={(e) => {
+              table.getColumn("brand")?.setFilterValue(e.target.value || undefined)
+              table.setPageIndex(0)
+            }}
+            className="w-full sm:max-w-xs border rounded px-3 py-2 text-sm"
+          >
+            <option value="">All Brands</option>
+            {Array.from(new Set(data.map((row: any) => row.brand).filter(Boolean))).map(
+              (brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              )
+            )}
+          </select>
         </div>
+        
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

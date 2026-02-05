@@ -56,6 +56,7 @@ export const columns: ColumnDef<Item>[] = [
         </Button>
       )
     },
+    enableSorting: true,
   },
   {
     accessorKey: "name",
@@ -82,7 +83,7 @@ export const columns: ColumnDef<Item>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc", true)}
         >
           Brand
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -93,6 +94,18 @@ export const columns: ColumnDef<Item>[] = [
   {
     accessorKey: "current_stock",
     header: "Current Stock",
+    cell: ({ getValue }) => {
+      const stock = getValue<number>()
+      const isLow = stock < 10
+
+      return (
+        <span
+          className={isLow ? "text-red-600 font-bold" : ""}
+        >
+          {stock}
+        </span>
+      )
+    },
   },
   {
     accessorKey: "unit",
