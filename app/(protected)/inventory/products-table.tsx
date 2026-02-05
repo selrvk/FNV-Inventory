@@ -63,6 +63,10 @@ export function DataTable<TData extends {
   data,
 }: DataTableProps<TData, TValue>) {
   
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 7,           // ← start with 10 rows per page
+  });
   const [globalFilter, setGlobalFilter] = React.useState("")
   const [mounted, setMounted] = React.useState(false)
   const isMobile = useIsMobile()
@@ -85,6 +89,7 @@ export function DataTable<TData extends {
       sorting,
       globalFilter,
       columnFilters,
+      pagination,
       columnVisibility: isMobile
         ? {
             barcode: false,
@@ -98,6 +103,7 @@ export function DataTable<TData extends {
           }
         : {},
     },
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -121,6 +127,23 @@ export function DataTable<TData extends {
             placeholder="Search products..."
             className="w-full sm:max-w-sm border rounded px-3 py-2 text-sm"
           />
+          <select
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(e) => {
+              table.getColumn("name")?.setFilterValue(e.target.value || undefined)
+              table.setPageIndex(0)
+            }}
+            className="w-full sm:max-w-xs border rounded px-3 py-2 text-sm"
+          >
+            <option value="">All Product Names</option>
+            {Array.from(new Set(data.map((row: any) => row.name).filter(Boolean))).map(
+              (name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              )
+            )}
+          </select>
           <select
             value={(table.getColumn("brand")?.getFilterValue() as string) ?? ""}
             onChange={(e) => {
