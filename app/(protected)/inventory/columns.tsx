@@ -93,15 +93,21 @@ export const columns: ColumnDef<Item>[] = [
   },
   {
     accessorKey: "current_stock",
-    header: "Current Stock",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Stock
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ getValue }) => {
       const stock = getValue<number>()
       const isLow = stock < 10
 
       return (
-        <span
-          className={isLow ? "text-red-600 font-bold" : ""}
-        >
+        <span className={isLow ? "text-red-600 font-bold" : ""}>
           {stock}
         </span>
       )
