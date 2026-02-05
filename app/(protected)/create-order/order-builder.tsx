@@ -7,6 +7,13 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Item } from "../inventory/columns"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type OrderItem = Item & {
   quantity: number
@@ -16,21 +23,38 @@ type OrderItem = Item & {
 
 export default function OrderBuilder({ items }: { items: Item[] }) {
 
-  const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
   const [expandedItemId, setExpandedItemId] = useState<number | null>(null);
   const [expandedProductId, setExpandedProductId] = useState<number | null>(null);
+  const [searchBarcode, setSearchBarcode] = useState("");
+  const [searchName, setSearchName] = useState("");
+  const [searchBrand, setSearchBrand] = useState("");
 
+  const uniqueBrands = Array.from(
+    new Set(
+      items
+        .map(item => item.brand)
+        .filter(Boolean)
+    )
+  ).sort((a, b) => a.localeCompare(b));
 
   const PAGE_SIZE = 5
 
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [customerName, setCustomerName] = useState("");
 
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(search.toLowerCase()) ||
-    item.brand?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredItems = items.filter(item => {
+    const matchesBarcode = !searchBarcode || 
+      (item.barcode && item.barcode.toLowerCase().includes(searchBarcode.toLowerCase()));
+
+    const matchesName = !searchName || 
+      item.name.toLowerCase().includes(searchName.toLowerCase());
+
+    const matchesBrand = !searchBrand ||                     
+      (item.brand && item.brand.toLowerCase() === searchBrand.toLowerCase());
+
+    return matchesBarcode && matchesName && matchesBrand;
+  });
 
   const pageCount = Math.ceil(filteredItems.length / PAGE_SIZE)
 
@@ -39,12 +63,10 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
     page * PAGE_SIZE + PAGE_SIZE
   )
 
-  
   useEffect(() => {
-    setPage(0)
-  }, [search])
+    setPage(0);
+  }, [searchBarcode, searchName, searchBrand]);
 
-  
   function addItem(item: Item) {
     setOrderItems(prev => {
       const existing = prev.find(i => i.id === item.id)
@@ -130,11 +152,64 @@ export default function OrderBuilder({ items }: { items: Item[] }) {
       <h2 className="text-lg font-semibold">Products</h2>
 
       {/* Search */}
-      <Input
-        placeholder="Search products..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
+      <div className="flex flex-col sm:flex-row gap-3">
+
+        {/* Brand filter */}
+        <div className="flex-1 min-w-0">
+          <Select
+            value={searchBrand}                // "" means no brand selected → shows placeholder
+            onValueChange={setSearchBrand}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Brands" />   {/* ← shown when value === "" */}
+            </SelectTrigger>
+            <SelectContent>
+              {/* No <SelectItem value=""> here */}
+              {uniqueBrands.map(brand => (
+                <SelectItem key={brand} value={brand}>
+                  {brand}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Name search */}
+        <div className="flex-1 min-w-0">
+          <Input
+            placeholder="Product name..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        {/* Barcode search */}
+        <div className="flex-1 min-w-0">
+          <Input
+            placeholder="Enter barcode (if available)..."
+            value={searchBarcode}
+            onChange={(e) => setSearchBarcode(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        </div>
+
+      { (searchBarcode || searchName || searchBrand) && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setSearchBarcode("");
+            setSearchName("");
+            setSearchBrand("");
+          }}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          CLEAR FILTERS
+        </Button>
+      )}
 
       {/* List */}
       {paginatedItems.length === 0 && (
