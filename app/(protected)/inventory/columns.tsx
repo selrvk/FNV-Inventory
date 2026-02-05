@@ -6,6 +6,7 @@ import { deleteProduct } from "./actions"
 import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
+import { DeleteConfirm } from "./delete-confirm"
 import { MoreHorizontal } from "lucide-react"
 import {
   DropdownMenu,
@@ -126,26 +127,28 @@ export const columns: ColumnDef<Item>[] = [
     header: "Sell Price",
   },
   {
-    id: "actions",
-    cell: ({ row }) => {
-      const item = row.original
- 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <UpdateProductModal item={item} />
-            <DropdownMenuItem onClick={() => deleteProduct(item)}>Delete Item</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+  id: "actions",
+  cell: ({ row }) => {
+    const item = row.original
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="flex flex-col">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          
+          <UpdateProductModal item={item} />          
+          <DeleteConfirm item={item} />
+          
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
   },
+},
 ]
