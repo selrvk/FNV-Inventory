@@ -17,17 +17,17 @@ export default function NavPanel() {
   const pathname = usePathname()
   const isActive = (path: string) => pathname === path
 
-  return (
+  return (  
     <>
-      <aside className="hidden md:flex bg-blue-900/50 w-44 flex-col justify-between py-6">
-        <div className="space-y-20">
+      <aside className="hidden md:flex bg-linear-to-t from-blue-800/85 to-blue-950/70 w-44 flex-col justify-between py-6 max-h-screen">
+        <div className="space-y-20 ">
           <div>
             <img
               src="/fnv.png"
-              alt="Product image"
+              alt="FNV logo image"
               className="w-30 object-cover justify-self-center"
             />
-            <h1 className="text-white font-semibold text-center text-sm">
+            <h1 className="text-zinc-100 font-semibold text-center text-sm">
               Inventory Management System
             </h1>
           </div>
@@ -44,6 +44,7 @@ export default function NavPanel() {
         </div>
       </aside>
 
+      {/* ignore this lmao unless u wanna change the mobile version */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-blue-900 border-t border-indigo-800">
         <div className="flex justify-around">
           <NavIcon href="/dashboard" icon={LayoutDashboard} active={isActive("/dashboard")} />

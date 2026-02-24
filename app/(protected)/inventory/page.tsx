@@ -22,33 +22,31 @@ export default async function Inventory() {
 
   return (
 
-    <div className="mx-auto py-6">
+    <div className="mx-auto">
 
       <h1 className="text-blue-900 text-3xl font-bold">
         INVENTORY
       </h1>
 
-      <div className="flex items-center">
+      <div className="flex flex-col mx-auto py-10">
 
-        <div className="flex container mt-10 mx-auto justify-end">
-          <div className="my-4">
-            <AddProductModal />
+        <div className="flex flex-row mt-10 justify-between">
+          <h1 className="text-2xl">
+            Products
+          </h1>
+
+          <div className="flex justify-end gap-10">
+            <div className="">
+              <AddProductModal />
+            </div>
+
+            <Link href="/create-order">
+              <Button className="">
+                Create Order
+              </Button>
+            </Link>
           </div>
-
-          <Link href="/create-order">
-            <Button className="my-4 ml-2">
-              Create Order
-            </Button>
-          </Link>
-
         </div>
-      
-      </div>
-
-      <div className="container mx-auto py-10">
-        <h1 className="text-2xl">
-          Products
-        </h1>
 
         <div className="mt-10">
           <DataTable columns={columns} data={data as Item[]} />

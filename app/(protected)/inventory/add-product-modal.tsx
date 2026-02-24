@@ -62,6 +62,7 @@ export function AddProductModal() {
               <div className="flex justify-end gap-2 mt-4">
                 <Button
                   type="button"
+                  className="text-red-600"
                   variant="outline"
                   onClick={() => setOpen(false)}
                 >

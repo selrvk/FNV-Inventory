@@ -118,14 +118,14 @@ export function DataTable<TData extends {
   return (
     <>
     {!mounted ? null : (
-      <div className="rounded-md border">
-      <div className="border-b sm:max-w-full">
-        <div className="p-4">
+      <div className="">
+      <div className="border-b sm:max-w-full bg-blue-900/20 rounded-t-2xl">
+        <div className="flex gap-4 p-4">
           <input
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
             placeholder="Search products..."
-            className="w-full sm:max-w-sm border rounded px-3 py-2 text-sm"
+            className="w-full sm:max-w-sm border-b rounded px-3 py-2 text-sm border-blue-950"
           />
           <select
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -133,7 +133,7 @@ export function DataTable<TData extends {
               table.getColumn("name")?.setFilterValue(e.target.value || undefined)
               table.setPageIndex(0)
             }}
-            className="w-full sm:max-w-xs border rounded px-3 py-2 text-sm"
+            className="w-full sm:max-w-xs border-b rounded border-blue-950 px-3 py-2 text-sm font-semibold"
           >
             <option value="">All Product Names</option>
             {Array.from(new Set(data.map((row: any) => row.name).filter(Boolean))).map(
@@ -150,7 +150,7 @@ export function DataTable<TData extends {
               table.getColumn("brand")?.setFilterValue(e.target.value || undefined)
               table.setPageIndex(0)
             }}
-            className="w-full sm:max-w-xs border rounded px-3 py-2 text-sm"
+            className="w-full sm:max-w-xs border-b border-blue-950 rounded px-3 py-2 text-sm font-semibold"
           >
             <option value="">All Brands</option>
             {Array.from(new Set(data.map((row: any) => row.brand).filter(Boolean))).map(
@@ -164,7 +164,7 @@ export function DataTable<TData extends {
         </div>
         
         <Table>
-          <TableHeader>
+          <TableHeader className="">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -183,10 +183,10 @@ export function DataTable<TData extends {
 
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, index) => (
                 <React.Fragment key={row.id}>
                   {/* MAIN ROW */}
-                  <TableRow>
+                  <TableRow className={`${index % 2 === 0 ? "bg-zinc-100" : "bg-white"} hover:bg-green-100 transition-colors`}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         <div className="flex flex-col">
@@ -258,9 +258,10 @@ export function DataTable<TData extends {
       </div>
 
       {/* PAGINATION */}
-      <div className="flex items-center justify-end space-x-2 py-2 px-4 bg-zinc-100">
+      <div className="flex items-center justify-end space-x-2 py-2 px-4 bg-blue-900/20 rounded-b-2xl">
         <Button
           variant="outline"
+          className="text-black"
           size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
@@ -269,6 +270,7 @@ export function DataTable<TData extends {
         </Button>
         <Button
           variant="outline"
+          className="text-black"
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
