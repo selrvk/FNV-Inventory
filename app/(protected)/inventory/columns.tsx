@@ -140,7 +140,7 @@ export const columns: ColumnDef<Item>[] = [
     size: 90,
     header: () => (
       <div className="text-right">
-        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">SRP</span>
+        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">Unit Price</span>
       </div>
     ),
     cell: ({ getValue }) => (
@@ -154,7 +154,7 @@ export const columns: ColumnDef<Item>[] = [
     size: 100,
     header: () => (
       <div className="text-right">
-        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">Unit Price</span>
+        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">SRP</span>
       </div>
     ),
     cell: ({ getValue }) => (
