@@ -1,4 +1,4 @@
-  // /components/admin-user-list.tsx
+// /app/settings/admin-user-list.tsx
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 
 export async function AdminUserList() {
@@ -10,61 +10,60 @@ export async function AdminUserList() {
     .order("created_at", { ascending: false })
 
   return (
-    <div
-      className="
-        w-full
-        max-w-md
-        mx-auto
-        mt-6
-        p-4
-        sm:p-6
-        bg-white
-        rounded-lg
-        shadow
-        sm:mx-0
-        lg:w-[30%]
-        lg:text-right
-      "
-    >
-      <h3 className="font-semibold mb-4 text-gray-800 text-left lg:text-right">
-        Current Users
-      </h3>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        .aul-wrap { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .fn-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
 
-      <ul className="space-y-3 max-h-75 autooverflow-y-">
-        {users?.map((u) => (
-          <li
-            key={u.id}
-            className="
-              flex
-              items-center
-              justify-between
-              text-sm
-              border
-              rounded
-              px-3
-              py-2
-              lg:flex-row-reverse
-            "
-          >
-            <span className="font-medium">{u.username}</span>
+        .user-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.6rem 0;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+          transition: background 0.12s ease;
+        }
+        .user-row:last-child { border-bottom: none; }
 
-            <span
-              className={`
-                px-2 py-0.5 rounded text-xs font-medium
-                ${u.is_admin
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-700"}
-              `}
-            >
-              {u.is_admin ? "Admin" : "Employee"}
-            </span>
-          </li>
-        ))}
+        .pill-admin {
+          font-size: 0.62rem; font-weight: 700;
+          text-transform: uppercase; letter-spacing: 0.1em;
+          padding: 0.15rem 0.55rem; border-radius: 20px;
+          background: rgba(42,91,215,0.15); color: #6b9fff;
+          border: 1px solid rgba(42,91,215,0.25);
+        }
+        .pill-employee {
+          font-size: 0.62rem; font-weight: 700;
+          text-transform: uppercase; letter-spacing: 0.1em;
+          padding: 0.15rem 0.55rem; border-radius: 20px;
+          background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.35);
+          border: 1px solid rgba(255,255,255,0.08);
+        }
+      `}</style>
 
-        {users?.length === 0 && (
-          <li className="text-sm text-gray-500">No users found</li>
-        )}
-      </ul>
-    </div>
+      <div className="aul-wrap">
+        <p style={{ fontSize: "0.6rem", textTransform: "uppercase", letterSpacing: "0.18em", color: "rgba(255,255,255,0.25)", fontWeight: 700, marginBottom: "0.75rem" }}>
+          Current Users
+        </p>
+
+        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+          {!users || users.length === 0 ? (
+            <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.25)" }}>No users found.</p>
+          ) : (
+            users.map(u => (
+              <div key={u.id} className="user-row">
+                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>
+                  {u.username}
+                </span>
+                <span className={u.is_admin ? "pill-admin" : "pill-employee"}>
+                  {u.is_admin ? "Admin" : "Employee"}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </>
   )
 }

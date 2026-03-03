@@ -59,7 +59,7 @@ export function DataTable<TData extends {
 }, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData, TValue>) { 
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,

@@ -17,12 +17,27 @@ export default async function CreateOrder() {
   }
 
   return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-blue-900 text-3xl font-bold mb-6">
-        CREATE ORDER
-      </h1>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        .fn-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+        .co-page    { font-family: 'Plus Jakarta Sans', sans-serif; color: #e8ecf5; }
+      `}</style>
 
-      <OrderBuilder items={data as Item[]} />
-    </div>
+      <div className="co-page">
+        <div className="flex items-end justify-between border-b pb-6 mb-8" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] mb-1 font-semibold" style={{ color: "#e8001d" }}>
+              Sales
+            </p>
+            <h1 className="fn-display text-6xl md:text-7xl text-white leading-none">
+              Create Order
+            </h1>
+          </div>
+        </div>
+
+        <OrderBuilder items={data as Item[]} />
+      </div>
+    </>
   )
 }
