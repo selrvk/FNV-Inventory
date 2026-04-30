@@ -4,6 +4,7 @@ import { columns, Item } from "./columns"
 import { DataTable } from "./products-table"
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AddProductModal } from "./add-product-modal"
+import { ExportInventoryButton } from "./export-button"
 import Link from "next/link";
 import { Package, Plus, ShoppingCart } from "lucide-react";
 
@@ -283,6 +284,7 @@ export default async function Inventory() {
               <h2 className="fn-display text-2xl text-white leading-none">Products</h2>
             </div>
             <div className="flex items-center gap-2">
+              <ExportInventoryButton data={data as Item[]} />
               <AddProductModal />
               <Link href="/create-order" className="inv-btn-secondary">
                 <ShoppingCart size={13} />

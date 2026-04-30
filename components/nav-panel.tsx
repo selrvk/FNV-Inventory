@@ -9,8 +9,8 @@ import {
   ClipboardList,
   History,
   Settings,
-  LogOut,
 } from "lucide-react"
+import LogoutButton from "./logout-button"
 
 export default function NavPanel() {
   const pathname = usePathname()
@@ -151,7 +151,7 @@ export default function NavPanel() {
           <div className="nav-divider" />
           <nav className="flex flex-col">
             <NavItem href="/settings" label="Settings" icon={Settings} active={isActive("/settings")} />
-            <NavItem href="/" label="Logout" icon={LogOut} logout />
+            <LogoutButton />
           </nav>
         </div>
       </aside>
@@ -164,7 +164,7 @@ export default function NavPanel() {
         <MobileItem href="/orders"        icon={ClipboardList}   active={isActive("/orders")} />
         <MobileItem href="/order-history" icon={History}         active={isActive("/order-history")} />
         <MobileItem href="/settings"      icon={Settings}        active={isActive("/settings")} />
-        <MobileItem href="/"              icon={LogOut} />
+        <LogoutButton mobile />
       </nav>
     </>
   )
@@ -208,3 +208,4 @@ function MobileItem({
     </Link>
   )
 }
+

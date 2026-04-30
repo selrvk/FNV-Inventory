@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { clearAllOrderHistory, clearSingleOrder } from "./actions"
 import { CheckCircle, XCircle, Trash2, Package } from "lucide-react"
+import { ExportCSVButton } from "./export-csv-button"
 
 export default async function OrderHistory() {
   const supabase = await createSupabaseServerClient()
@@ -161,12 +162,17 @@ export default async function OrderHistory() {
             </h1>
           </div>
 
-          {isAdmin && orders && orders.length > 0 && (
-            <form action={clearAllOrderHistory}>
-              <button type="submit" className="btn-clear-all">
-                <Trash2 size={13} /> Clear All History
-              </button>
-            </form>
+          {orders && orders.length > 0 && (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <ExportCSVButton orders={orders} orderItems={orderItems ?? []} />
+              {isAdmin && (
+                <form action={clearAllOrderHistory}>
+                  <button type="submit" className="btn-clear-all">
+                    <Trash2 size={13} /> Clear All History
+                  </button>
+                </form>
+              )}
+            </div>
           )}
         </div>
 

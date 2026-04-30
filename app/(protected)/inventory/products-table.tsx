@@ -241,11 +241,11 @@ export function DataTable<TData extends {
                                 <p className="text-slate-700">{row.original.unit}</p>
                               </div>
                               <div>
-                                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-0.5">SRP</p>
+                                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-0.5">Unit Price</p>
                                 <p className="text-slate-700">₱{row.original.price_buy.toFixed(2)}</p>
                               </div>
                               <div>
-                                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-0.5">Unit Price</p>
+                                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-0.5">SRP</p>
                                 <p className="text-slate-700">₱{row.original.price_sell.toFixed(2)}</p>
                               </div>
                               <div>
